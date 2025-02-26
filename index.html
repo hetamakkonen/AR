@@ -24,10 +24,17 @@
     sourceWidth= "800" sourceHeight= "600"
     displayWidth= "1280" displayHeight="720" >
 
+    <a-assets>
+        <img id=logo src="./assets/TRANSLOGO.png">
+      </a-assets> 
+
 		<a-marker preset="hiro" size= "0.08">
 
-			<a-cylinder position='0 0 0' rotation='0 0 0' scale='1 1 1' color='#FFFFFF' material='opacity: 1;'></a-cylinder>
-		</a-marker>
+	
+
+        <a-marker  preset="hiro" size="0.8">
+            <a-image src="logo" rotation="90 0 0" width="2" height="2"></a-image>
+          </a-marker>
 
 		<a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
