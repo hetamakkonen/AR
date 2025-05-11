@@ -81,21 +81,48 @@
     AFRAME.registerComponent('play-on-click', {
       init: function () {
         this.onClick = this.onClick.bind(this);
+        this.playTimer = null;
+        
+        // Add event listener for when video ends
+        var videoEl = document.querySelector('#adarVideo');
+        videoEl.addEventListener('ended', () => {
+          console.log("video ended");
+          // Video naturally stops at the end, no auto-restart
+        });
 
         this.el.addEventListener('targetFound', event => {
-          console.log("target found");
+          console.log("target found, will play video after delay");
           var videoEl = this.el.getAttribute('material').src;
           if (!videoEl) { return; }
+          
           this.el.object3D.visible = true;
-          videoEl.play();
+          videoEl.currentTime = 0; // Reset video to beginning
+          
+          // Clear any existing timer
+          if (this.playTimer) {
+            clearTimeout(this.playTimer);
+          }
+          
+          // Set timer to start video after 2 seconds
+          this.playTimer = setTimeout(() => {
+            console.log("Starting video after delay");
+            videoEl.play();
+          }, 2000); // 2 seconds delay
         });
         
         this.el.addEventListener('targetLost', event => {
           console.log("target lost");
           var videoEl = this.el.getAttribute('material').src;
           if (!videoEl) { return; }
+          
           this.el.object3D.visible = false;
           videoEl.pause();
+          
+          // Clear play timer if target is lost
+          if (this.playTimer) {
+            clearTimeout(this.playTimer);
+            this.playTimer = null;
+          }
         });
       },
       
@@ -123,14 +150,14 @@
     device-orientation-permission-ui="enabled: false">
 
     <a-assets>
-      <!-- Point to your video file -->
-      <video src="./assets/adar.mp4" muted="true" loop="true" controls="false" playsinline webkit-playsinline
+      <!-- Point to your video file - removed loop attribute -->
+      <video src="./assets/adar.mp4" muted="true" controls="false" playsinline webkit-playsinline
         type='video/mp4' id="adarVideo"></video>
     </a-assets>
 
-    <!-- Image target that plays video with chromakey effect -->
+    <!-- Image target that plays video with regular material -->
     <a-entity mindar-image-target="targetIndex: 0" play-on-click
-      material="shader: chromakey; src: #adarVideo; chroma: true; color: 0. 1. 0."
+      material="shader: flat; src: #adarVideo;"
       geometry="primitive: plane; width: 1; height: 1.6" position="0 0 0" rotation="0 0 0" side="double">
     </a-entity>
 
